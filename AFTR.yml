@@ -71,7 +71,7 @@
    - name: Create iproute file 
      tags: routing
      ansible.builtin.template:
-       src: /files/networking.txt
+       src: /root/DS-Lite_Test_Bed/files/networking.txt
        dest: /root/networking.sh
        owner: root
        mode: '755'
