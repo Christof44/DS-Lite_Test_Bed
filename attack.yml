@@ -1,0 +1,93 @@
+---
+-  hosts: localhost
+   any_errors_fatal: true
+   gather_facts: no
+
+
+
+   tasks:
+   - name: Update the machine
+     tags: upd
+     yum:
+       update_only: yes
+
+
+   - name: Install General Essential packages
+     tags: essentials
+     yum: 
+       name: 
+         - nano
+         - net-tools
+         - tcpdump
+         - nmap
+         - wireshark
+         - git
+         - wget
+         - iproute
+         - psmisc
+         - yum-utils
+         - chrony
+         - telnet
+         - iptables-services
+       state: present
+
+   - name: install several packages after deleting iptables
+     tags: iptables
+     yum: 
+       name: 
+         - iptables
+         - iproute
+         - dhclient
+         - plymouth
+         - initscripts
+         - kbd
+         - kexec-tools
+         - dracut
+         - firewalld
+         - iptables-services
+         - mlocate
+       state: present
+
+
+   - name: configure NTP
+     tags: NTP
+     shell: |
+       updatedb      
+       timedatectl set-ntp true
+       timedatectl set-timezone Europe/Berlin
+
+
+
+   - name: Install essential Packages to run "thc-ipv6" repo Toolkit
+     tags: thc-essentials
+     yum: 
+       name: 
+         - libpcap-devel
+         - openssl-devel
+         - libnetfilter_queue-devel
+         - gcc
+       state: present
+
+
+   - name: Clone a github repository
+     tags: repo
+     git:
+       repo: https://github.com/vanhauser-thc/thc-ipv6.git
+       dest: /root/hacker-tool
+       clone: yes
+       update: yes
+
+
+   - name: Play around withing the repo 
+     tags: in-repo
+     shell: make all && make install
+     args:
+       chdir: /root/hacker-tool
+
+   - name: Create attack script 
+     tags: attack
+     ansible.builtin.template:
+       src: /root/DS-Lite_Test_Bed/files/attack.txt
+       dest: /root/attack.sh
+       owner: root
+       mode: '755'
