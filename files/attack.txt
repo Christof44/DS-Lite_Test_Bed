@@ -1,0 +1,12 @@
+
+#!/bin/bash
+
+
+for (( i=1; i<=5; i++ ))
+do
+
+   four2six -s 2001:db8:0:1::2 ens38 2001:db8:0:1::1 10.0.0.2 198.51.100.2
+
+done
+
+#parasite6 ens38
