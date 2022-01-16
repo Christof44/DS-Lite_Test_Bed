@@ -1,1 +1,28 @@
-.
+#!/bin/bash
+
+# enable IPv4 & IPv6 forwarding 
+echo 1 > /proc/sys/net/ipv4/ip_forward
+echo 1 > /proc/sys/net/ipv6/conf/all/forwarding
+
+# set up IPIP6 link
+ip link add name ipip6 type ip6tnl local 2001:db8:0:1::1 remote 2001:db8:0:1::2 mode any dev ens34
+ip link set dev ipip6 up
+
+# Set route for packets headings toward B4 Router
+ip route add 10.0.0.0/24 dev ipip6
+
+# Flushing iptbales rules
+iptables -F
+iptables -X
+ip6tables -F
+ip6tables -X
+
+# Allowing ssh traffic
+iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+
+# Dropping any traffic not coming from B4 ens38 MAC address
+ip6tables -A INPUT -i ens34 -m mac ! --mac-source 00:0c:29:67:14:14 -j DROP
+
+
+# Masqurading AFTR ens35 interface
+iptables -t nat -A POSTROUTING -o ens35 -j MASQUERADE
