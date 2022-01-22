@@ -6,6 +6,8 @@ Ansible software was used, playbooks were written to automate the process of ins
 
 Just get the toplogy built, as shown in the the attached pic in issues section.
 
+All machines are CentOS-7 and built using VMware Workstation Player.
+
 Pre-requisites:-
 
 1- yum update
